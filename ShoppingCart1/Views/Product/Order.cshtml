@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ShoppingCart1.Models.Order>
+  
+<h1 style="margin-top:50px;color:darkslateblue">Orders</h1>
+@if (Model.Count() != 0)
+  {
+<table class="table" style="margin-top:40px">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Product.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Price)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Quantity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+   </tr>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Product.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Price)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Quantity)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+
+        <td>
+            <a class="btn btn-primary btn-sm" href=" @Url.Action("Delete", "Product", new { id = item.Id })">Cancel Order</a>
+</td>
+    </tr>
+}
+
+</table>
+  }
+  else
+  {
+      <h1 style="margin-top:50px;color:darkblue">You have not got any Orders</h1>
+      <br />
+      @Html.ActionLink("go back", "Index", "Product");
+  }

@@ -1,0 +1,175 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@using ShoppingCart1.Models;
+@model ShoppingCart1.Models.ViewModel
+
+
+
+@{
+    /**/
+
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/NewLayout.cshtml";
+}
+
+<style>
+    div.fixed {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 250px;
+        margin-left: 20px
+    }
+
+    div.ex1 {
+        background-color: #eee;
+        width: 200px;
+        height: 200px;
+        overflow-y: scroll; /* Add the ability to scroll */
+    }
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .ex1::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar for IE and Edge */
+    .ex1 {
+        -ms-overflow-style: none;
+    }
+</style>
+
+
+<div class="fixed">
+    <h3 style="color:royalblue">Filters</h3>
+    @using (Html.BeginForm("Newsearch", "NewProduct", FormMethod.Post))
+    {
+
+        <h3>Search By Name</h3>
+        <input type="text" name="Search" size="600" style="margin-top:10px" /> <input type="submit" value="Search" />
+    }
+
+
+    <h4>
+
+
+        Categories:
+    </h4>
+    <div class="ex1">
+        @foreach (var item in Model.categories)
+        {
+            <a style="font-size:larger" href="@Url.Action("NewCategories", "NewProduct", new { name = item.Name })"> @item.Name</a><br />
+        }
+    </div>
+    <br />
+
+    @using (Html.BeginForm("NewPrice", "NewProduct", FormMethod.Post))
+    {
+        <h3 style="margin-top:30px">Price</h3>
+
+
+        <p>
+            @Html.CheckBox("lessthanfive")Less than 500
+        </p>
+
+        <p>
+            @Html.CheckBox("fivetoone") Between 500 to 1000
+        </p>
+        <p> @Html.CheckBox("onetotwo")Between 1000 to 2000</p>
+        <p>
+            @Html.CheckBox("twotofive")Between 2000 and 5000
+        </p>
+        <p> @Html.CheckBox("fivetoten")Between 5000 and 10000</p>
+        <p>
+            @Html.CheckBox("aboveten") Above 10000
+
+        </p>
+        <h3>Stock</h3>
+
+        <p>@Html.RadioButton("stock", "in")InStock</p>
+        <p>@Html.RadioButton("stock", "out") OutOfStock</p>
+
+
+        <input type="submit" value="Apply" size="10" style="font-size:20px" />
+
+
+    }
+
+    <br />
+
+
+
+</div>
+<h1 style="color:darkblue">Products</h1>
+<h4>@Html.ActionLink("Add New", "Create", "NewProduct")</h4>
+
+
+@if (Model.products.Count() != 0)
+{
+    <table class="table">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Price
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Image
+            </th>
+            <th>
+                Stock
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Display
+            </th>
+
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model.products)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Image)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Display)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+
+    </table>
+    @Html.PagedListPager(Model.products, i => Url.Action("Index", "NewProduct", new { i, name = Request.QueryString["name"] }), new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayItemSliceAndTotal = true })
+}
+else
+{
+    <h1 class="alert-danger" style="margin-top:20px">No Items Found</h1>
+}

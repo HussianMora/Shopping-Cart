@@ -1,0 +1,6 @@
+﻿@model ShoppingCart1.Models.Customer
+
+
+<h2 style="margin-top:50px">Name:@TempData["Name"]</h2>@Html.ActionLink("Edit", "Edit", "Customer")
+<h2>Mobile No:@TempData["MobileNo"]</h2>@Html.ActionLink("Edit", "MobileNoEdit", "Customer", new { MobileNo = TempData["MobileNo"].ToString() })
+<h2>Postal Code:@TempData["PostalCode"]</h2>@Html.ActionLink("Edit", "PostalEdit", "Customer", new { PostalCode = TempData["PostalCode"].ToString() })

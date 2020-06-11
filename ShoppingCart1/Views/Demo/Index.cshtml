@@ -1,0 +1,59 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <div class="top-left">
+        <h3 style="color:royalblue">Filters</h3>
+        @using (Html.BeginForm(FormMethod.Post))
+        {
+            <h4>Search By Name</h4>
+            <input type="text" name="Search"  style="margin-top:10px" /> <input type="submit" value="Search" />
+        }
+        @using (Html.BeginForm("Price", "NewProduct", FormMethod.Post))
+        {
+            <h4>Price</h4>
+            <h5>
+                @Html.CheckBox("lessthanfive")Less than 500
+                @Html.CheckBox("fivetoone") Between 500 to 1000
+                @Html.CheckBox("onetotwo")Between 1000 to 2000
+                @Html.CheckBox("twotofive")Between 2000 and 5000
+                @Html.CheckBox("fivetoten")Between 5000 and 10000
+                @Html.CheckBox("aboveten") Above 10000
+            </h5>
+            <h4>Stock</h4>
+            <h5>
+                @Html.RadioButton("stock", "in")InStock
+                @Html.RadioButton("stock", "out") OutOfStock
+
+            </h5>
+            <input type="submit" value="Apply" size="2" />
+
+
+        }
+
+        <br />
+
+
+        <h4>
+            Categories:
+            <a style="font-size:larger" href="@Url.Action("Index", "NewProduct", new { name = "Electronics" })">&nbsp Electronics</a>
+            <a style="font-size:larger" href="@Url.Action("Index", "NewProduct", new { name = "Lifestyle" })">&nbsp Lifestyle&nbsp </a>
+            <a style="font-size:larger" href="@Url.Action("Index", "NewProduct", new { name = "Sports" })">&nbspSports&nbsp</a>
+            <a style="font-size:larger" href="@Url.Action("Index", "NewProduct", new { name = "Pharmacy" })">&nbspPharmacy&nbsp</a>
+            <a style="font-size:larger" href="@Url.Action("Index", "NewProduct", new { name = "Healthcare" })">&nbspHealthcare&nbsp</a>
+            <a style="font-size:larger" href="@Url.Action("Index", "NewProduct", new { name = "Books and Music" })">&nbspBooks and Music&nbsp</a>
+        </h4>
+
+    </div>
+
+</body>
+</html>

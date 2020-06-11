@@ -1,0 +1,52 @@
+﻿@model ShoppingCart1.Models.Product
+@{
+    ViewBag.Tittle = "Add To Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Addtocart","Product"))
+{
+    <div class="row" style="margin-top:20px">
+      <div class="col-lg-4" style="margin-top:20px">
+        <img style="min-height:200px;width:100%;" src="@Url.Content(Model.Image)" />
+       </div>
+      <div class="col-lg-8 col-md-8 col-sm-8">
+          <a href="~/Views/Product/Addtocart.cshtml">~/Views/Product/Addtocart.cshtml</a>
+          <h1>Product Name:@Model.Name</h1>
+          <h2>Product Price:@Model.Price</h2>
+          <h5>Description:@Model.Description</h5>
+
+          @if (TempData["flag"] == null)
+          {
+              if (Model.Stock < 10)
+              {
+                  if (Model.Stock == 0)
+                  {
+                      <h4 style="color:red">Product Unavailable</h4>
+                      
+                  }
+                  else
+                  {
+                  <h4 style="color:goldenrod">only @Model.Stock items left</h4>
+                  }
+              }
+
+
+              <input type="number" name="qty" value="1" min="1" max="10" id="qty" />
+
+              <input type="submit" value="Add" class="btn btn-default" />
+          }
+          
+          else
+          {
+              <h4 style="color:red">Product Unavailable</h4>
+          }
+
+
+
+
+      </div>
+    </div>
+ }
+
+
+

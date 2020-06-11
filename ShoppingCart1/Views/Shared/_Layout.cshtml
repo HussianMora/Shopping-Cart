@@ -1,0 +1,195 @@
+﻿
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3cs<body>s/4/w3.css">
+
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            .mynav_navbar {
+                overflow: hidden;
+                background-color: #333;
+            }
+
+                .mynav_navbar a {
+                    float: left;
+                    font-size: 16px;
+                    color: white;
+                    text-align: center;
+                    padding: 14px 16px;
+                    text-decoration: none;
+                }
+
+            .mynav_dropdown {
+                float: left;
+                overflow: hidden;
+            }
+
+                .mynav_dropdown .mynav_dropbtn {
+                    font-size: 16px;
+                    border: none;
+                    outline: none;
+                    color: white;
+                    padding: 14px 16px;
+                    background-color: inherit;
+                    font-family: inherit;
+                    margin: 0;
+                }
+
+                .mynav_navbar a:hover, .mynav_dropdown:hover .mynav_dropbtn {
+                    background-color: red;
+                }
+
+            .mynav_dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: #f9f9f9;
+                min-width: 160px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+            }
+
+                .mynav_dropdown-content a {
+                    float: none;
+                    color: black;
+                    padding: 12px 16px;
+                    text-decoration: none;
+                    display: block;
+                    text-align: left;
+                }
+
+                    .mynav_dropdown-content a:hover {
+                        background-color: #ddd;
+                    }
+
+            .mynav_dropdown:hover .mynav_dropdown-content {
+                display: block;
+            }
+        </style>
+
+
+
+
+</head>
+<body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" style="margin-bottom:50px">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+
+            </div>
+
+            <div class="mynav_navbar">
+
+                @using (Html.BeginForm("search", "Product", FormMethod.Get))
+                {
+                    <input type="text" name="Search" size="600" style="margin-top:10px" /> <input type="submit" value="Search" />
+                }
+
+                <a href="@Url.Action("Main","Product")">Shopping Cart</a>
+                <div class="mynav_dropdown">
+                    <button class="mynav_dropbtn">
+                        Category
+                        <i class="fa fa-caret-down"></i>
+                    </button>
+
+
+                    <div class="mynav_dropdown-content">
+                        <a href="@Url.Action("Index", "Product",new {name="Sports" })">Sports</a>
+                        <a href="@Url.Action("Index", "Product",new {name="MenFashion" })">Men</a>
+                        <a href="@Url.Action("Index", "Product",new {name="WomenFashion" })">Women</a>
+                        <a href="@Url.Action("Index", "Product",new {name="Pharmacy" })">Pharmacy</a>
+                        <a href="@Url.Action("Index", "Product",new {name="Lifestyle" })">Lifestyle</a>
+                        <a href="@Url.Action("Index", "Product",new {name="Healthcare" })">Heatlhcare</a>
+                        <a href="@Url.Action("Index", "Product",new {name="Books and Music" })">Books and Music</a>
+                        <a href="@Url.Action("Index", "Product",new {name="Electronics" })">Electronics</a>
+
+
+
+
+                    </div>
+                </div>
+
+                <div class="mynav_dropdown">
+                    @if (Session["name"] != null)
+                    {
+                        <button class="mynav_dropbtn">
+                            @Session["name"]
+                            <i class="fa fa-caret-down"></i>
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="mynav_dropbtn">
+                            Login
+                            <i class="fa fa-caret-down"></i>
+                        </button>
+                    }
+
+
+
+                    <div class="mynav_dropdown-content">
+                        @if (Session["name"] == null)
+                        {
+
+                            @Html.ActionLink("Login", "Login", "Customer");
+                        }
+                        @Html.ActionLink("My Account", "MyAccount", "Customer")
+                        @Html.ActionLink("Orders", "Order", "Product")
+                        @if (Session["name"] != null)
+                        {
+                            @Html.ActionLink("Logout", "Logout", "Customer")
+
+                        }
+                    </div>
+                </div>
+                <a class="active" href="@Url.Action("Checkout","Product")"><i style="font-size:24px" class="fa">&#xf07a;</i>Cart</a>
+
+            </div>
+
+
+
+
+        </div>
+    </div>
+     <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            @Html.ActionLink("About Us", "MyAccount", "Customer")&nbsp&nbsp
+            @Html.ActionLink("Contact", "Order", "Product")&nbsp&nbsp
+            @Html.ActionLink("Admin", "Login", "AdminProduct")
+            @Html.ActionLink("NewAdmin", "Dashboard1", "Dashboard")
+
+
+
+
+            <p style="text-align:center">&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

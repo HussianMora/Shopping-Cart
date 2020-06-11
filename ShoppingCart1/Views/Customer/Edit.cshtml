@@ -1,0 +1,15 @@
+﻿@model ShoppingCart1.Models.Customer
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+@using (Html.BeginForm("Edit", "Customer", FormMethod.Post))
+{
+<div style="margin-top:80px">
+    <input type="text"  name="Name" required/>
+    <input type="submit" value="Edit"/>
+</div>
+}
+
+

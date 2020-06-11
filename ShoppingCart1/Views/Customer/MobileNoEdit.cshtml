@@ -1,0 +1,13 @@
+﻿@{
+    ViewBag.Title = "Edit";
+}
+
+@using (Html.BeginForm("MobileNoEdit", "Customer"))
+{
+    <div style="margin-top:80px">
+        <input type="number" name="Mobile_No" required />
+        <input type="submit" value="Edit" />
+    </div>
+}
+
+

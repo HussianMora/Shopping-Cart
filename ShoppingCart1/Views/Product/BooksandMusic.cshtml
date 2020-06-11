@@ -1,0 +1,54 @@
+﻿@model IEnumerable<ShoppingCart1.Models.Product>
+@{
+    ViewBag.Tittle = "Shopping Cart";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<div>
+    <h4 style="margin-top:50px">@Html.ActionLink("Admin?LoginHere", "Login", "AdminProduct")</h4>
+
+</div>
+
+<div class="container">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-11" style="text-align:center;margin-top:30px">
+                <img style="min-height:30px;width:30%;align-self:center" src="@Url.Content(item.Image) " />
+                <h4 style="text-align:center;margin-top:20px">@item.Name</h4>
+                <h4 style="text-align:center">@item.Price</h4>
+                <h2 style="text-align:center">@item.Description</h2>
+                @if (item.Stock < 10)
+                {
+                    if (item.Stock == 0)
+                    {
+                        <h5 style="text-align:center;color:red">Sorry this  Product is out of stock or currently unavailable </h5>
+                        TempData["index"] = null;
+                    }
+                    else
+                    {
+
+                        <h5 style="text-align:center;color:darkgoldenrod">Only @item.Stock item left </h5>
+                        TempData["index"] = "1";
+                    }
+                }
+                else
+                {
+                    TempData["index"] = "1";
+                }
+                @if (TempData["index"] != null)
+                {
+                    <h4 style="text-align:center">
+                        <a class="btn btn-primary btn-lg" href="@Url.Action("Addtocart", "Product", new { id = item.Id })"><i style="font-size:24px" class="fa">&#xf07a;</i>Add To Cart</a>
+                    </h4>
+                }
+                else
+                {
+                    <h4 style="text-align:center">
+                        <a class="btn btn-danger btn-lg"><i style="font-size:24px" class="fa">&#xf07a;</i>Add To Cart</a>
+                    </h4>
+                }
+            </div>
+        }
+    </div>
+</div>

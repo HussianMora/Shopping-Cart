@@ -1,0 +1,8 @@
+﻿@model ShoppingCart1.Models.Product
+<form action="@Url.Action("Remove","Product")" role="form">
+    @Html.Partial("_ModelHeader", new ShoppingCart1.BootstrapModal.ModelHeader { Heading = "Remove Product" })
+    <div class="modal-body form-horizontal">
+        Are you want to remove <strong>@Model.Name</strong>
+    </div>
+    @Html.Partial("_ModelFooter", new ShoppingCart1.BootstrapModal.ModelFooter { SubmitButtonText = "Remove" })
+</form>

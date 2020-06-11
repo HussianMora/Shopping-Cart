@@ -1,0 +1,157 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@using ShoppingCart1.Models;
+@model ShoppingCart1.Models.ViewModel
+
+@{
+    ViewBag.Tittle = "Shopping Cart";
+
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+    div.fixed {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        margin-top:100px;
+        width: 250px;
+        margin-left: 20px
+    }
+
+    div.ex1 {
+        background-color: #eee;
+        width: 200px;
+        height: 200px;
+        overflow-y: scroll; /* Add the ability to scroll */
+    }
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .ex1::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar for IE and Edge */
+    .ex1 {
+        -ms-overflow-style: none;
+    }
+</style>
+
+
+<div class="fixed">
+    <h3 style="color:royalblue">Filters</h3>
+    @using (Html.BeginForm("Search", "Product", FormMethod.Post))
+    {
+
+        <h3>Search By Name</h3>
+        <input type="text" name="Search" size="600" style="margin-top:10px" /> <input type="submit" value="Search" />
+    }
+
+
+    <h4>
+
+
+        Categories:
+    </h4>
+    <div class="ex1">
+        @foreach (var item in Model.categories)
+        {
+            <a style="font-size:larger" href="@Url.Action("Categories", "Product", new { name = item.Name })"> @item.Name</a><br />
+        }
+    </div>
+    <br />
+
+    @using (Html.BeginForm("Price", "Product", FormMethod.Post))
+    {
+        <h3 style="margin-top:30px">Price</h3>
+
+
+        <p>
+            @Html.CheckBox("lessthanfive")Less than 500
+        </p>
+
+        <p>
+            @Html.CheckBox("fivetoone") Between 500 to 1000
+        </p>
+        <p> @Html.CheckBox("onetotwo")Between 1000 to 2000</p>
+        <p>
+            @Html.CheckBox("twotofive")Between 2000 and 5000
+        </p>
+        <p> @Html.CheckBox("fivetoten")Between 5000 and 10000</p>
+        <p>
+            @Html.CheckBox("aboveten") Above 10000
+
+        </p>
+        <h3>Stock</h3>
+
+        <p>@Html.RadioButton("stock", "in")InStock</p>
+        <p>@Html.RadioButton("stock", "out") OutOfStock</p>
+
+
+        <input type="submit" value="Apply" size="10" style="font-size:20px" />
+
+
+    }
+
+    <br />
+
+
+
+</div>
+
+@if (Model.products.Count() != 0)
+{
+
+    <div class="container" style="margin-top:50px">
+        <div class="row">
+            <h2 style="text-align:center">@ViewBag.Name</h2>
+
+            @foreach (var item in Model.products)
+            {
+                <div class="col-md-4" style="text-align:center;margin-top:30px">
+                    <img style="height:250px;width:100%;align-self:center" src="@Url.Content(item.Image) " />
+                    <h4 style="text-align:center;margin-top:20px">@item.Name</h4>
+                    <h4 style="text-align:center">₹@item.Price</h4>
+                    <h2 style="text-align:center">@item.Description</h2>
+                    @if (item.Stock < 10)
+                    {
+                        if (item.Stock == 0)
+                        {
+                            <h5 style="text-align:center;color:red">Sorry this  Product is out of stock or currently unavailable </h5>
+                            TempData["index"] = null;
+                        }
+                        else
+                        {
+
+                            <h5 style="text-align:center;color:darkgoldenrod">Only @item.Stock item left </h5>
+                            TempData["index"] = "1";
+                        }
+                    }
+                    else
+                    {
+                        TempData["index"] = "1";
+                    }
+                    @if (TempData["index"] != null)
+                    {
+
+                        <h4 style="text-align:center">
+
+                            <a class="btn btn-primary btn-lg" href="@Url.Action("Addtocart", "Product", new { id = item.Id })"><i style="font-size:24px" class="fa">&#xf07a;</i>Add To Cart</a>
+                        </h4>
+                    }
+                    else
+                    {
+                        <h4 style="text-align:center">
+                            <a class="btn btn-danger btn-lg"><i style="font-size:24px" class="fa">&#xf07a;</i>Add To Cart</a>
+                        </h4>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    @Html.PagedListPager(Model.products, i => Url.Action("Index", "Product", new { i, stock ="in" }), new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded })
+}
+else
+{
+    <h1  class="alert-danger" style="margin-top:50px">Sorry No Products Available</h1>
+}
