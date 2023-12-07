@@ -1,21 +1,50 @@
-Given a set of playerIDs, write a program to print the winner of the "EliminatorX" game as per the following rules:
+using System;
+using System.Collections.Generic;
 
-The input for the game is the list of player IDs which is alphanumeric and non-sequential.
-The bomber starts eliminating alternate player ID starting from first player from left to right.
-After step 2, the bomber starts eliminating alternate player ID starting from right to left.
-The bomber continues to eliminate the alternate players in alternate directions until only one player is left.
-Input Format
+class Program
+{
+    static void Main()
+    {
+        // Read input from standard input
+        Console.Write("Enter player IDs separated by comma: ");
+        string input = Console.ReadLine();
 
- 
-First line contains list of playerIDs separated by comma. Read the input from the standard input stream
+        // Split the input into an array of player IDs
+        string[] playerIDs = input.Split(',');
 
- 
-Output Format
+        // Calculate the winner and print the result
+        string winner = CalculateEliminatorXWinner(playerIDs);
+        Console.WriteLine($"The winner is: {winner}");
+    }
 
- 
-Print the winner's player ID to the standard output stream
+    static string CalculateEliminatorXWinner(string[] playerIDs)
+    {
+        List<string> remainingPlayers = new List<string>(playerIDs);
 
- 
-Sample Input	Sample Output	Explanation
-bharat32,5ravi,linga,monica45	5ravi	bharat32,linga will be eliminated in the first run. Left with 5ravi,monica45 bomber starts eliminating from right to left. monica45 will be eliminated and the winner is 5ravi
-sanju98,veera90,ganga007,yohesh23,john78	veera90	
+        bool eliminateFromLeft = true;
+
+        while (remainingPlayers.Count > 1)
+        {
+            List<string> nextRound = new List<string>();
+
+            for (int i = 0; i < remainingPlayers.Count; i++)
+            {
+                if (i % 2 == 0 && eliminateFromLeft)
+                {
+                    // Eliminate alternate players from left to right
+                    nextRound.Add(remainingPlayers[i]);
+                }
+                else if (i % 2 == 1 && !eliminateFromLeft)
+                {
+                    // Eliminate alternate players from right to left
+                    nextRound.Add(remainingPlayers[i]);
+                }
+            }
+
+            remainingPlayers = nextRound;
+            eliminateFromLeft = !eliminateFromLeft;
+        }
+
+        return remainingPlayers[0];
+    }
+}
