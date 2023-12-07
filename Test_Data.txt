@@ -1,0 +1,25 @@
+Given a natural number N, write a program to print the hour-glass pattern as shown in the example
+
+For N=4
+
+1 0 2 0 3 0 4
+
+0 2 0 3 0 4 0
+
+0 0 3 0 4 0 0
+
+0 0 0 4 0 0 0
+
+0 0 3 0 4 0 0
+
+0 2 0 3 0 4 0
+
+1 0 2 0 3 0 4
+
+Input Format
+
+Read the input from the standard input stream.
+
+Output Format
+
+Each element in a row should be separated by a space. Print the output to standard output stream.
