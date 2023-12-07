@@ -1,8 +1,47 @@
-Given the time in the 24 HR format (HH:MM), write a program to print the smallest angle (in degrees) between the hour and minute hands of the clock at the given time.
+using System;
 
-Input and output format:
+class Program
+{
+    static void Main()
+    {
+        // Read input from standard input
+        Console.Write("Enter the time in 24-hour format (HH:MM): ");
+        string timeInput = Console.ReadLine();
 
-Read the input from standard input. Print the ceil value of the angle to standard output.
+        // Call the function with the input time
+        SmallestClockAngle(timeInput);
+    }
 
-Sample Input	Sample Output	Explanation
-03:30	75	
+    static void SmallestClockAngle(string time)
+    {
+        // Split the time into hours and minutes
+        string[] timeParts = time.Split(':');
+        if (timeParts.Length == 2 && int.TryParse(timeParts[0], out int hours) && int.TryParse(timeParts[1], out int minutes))
+        {
+            // Ensure that the hour is in the valid range (0 to 23) and minutes (0 to 59)
+            if (0 <= hours && hours <= 23 && 0 <= minutes && minutes <= 59)
+            {
+                // Calculate the angles of the hour and minute hands
+                double hourAngle = 0.5 * (60 * hours + minutes);
+                double minuteAngle = 6 * minutes;
+
+                // Calculate the absolute difference between the angles
+                double angle = Math.Abs(hourAngle - minuteAngle);
+
+                // Ensure the angle is in the range [0, 180]
+                angle = Math.Min(angle, 360 - angle);
+
+                // Print the ceiling value of the angle
+                Console.WriteLine(Math.Ceiling(angle));
+            }
+            else
+            {
+                Console.WriteLine("Invalid input");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid input format");
+        }
+    }
+}
