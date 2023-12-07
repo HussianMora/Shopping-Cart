@@ -1,40 +1,21 @@
-using System;
+Given a set of playerIDs, write a program to print the winner of the "EliminatorX" game as per the following rules:
 
-class Program
-{
-    static void Main()
-    {
-        // Read input from standard input
-        Console.Write("Enter the time in HH:MM format: ");
-        string inputTime = Console.ReadLine();
+The input for the game is the list of player IDs which is alphanumeric and non-sequential.
+The bomber starts eliminating alternate player ID starting from first player from left to right.
+After step 2, the bomber starts eliminating alternate player ID starting from right to left.
+The bomber continues to eliminate the alternate players in alternate directions until only one player is left.
+Input Format
 
-        // Calculate and print the smallest angle
-        int result = CalculateClockAngle(inputTime);
-        Console.WriteLine(result);
-    }
+ 
+First line contains list of playerIDs separated by comma. Read the input from the standard input stream
 
-    static int CalculateClockAngle(string time)
-    {
-        // Split the input time into hours and minutes
-        string[] timeParts = time.Split(':');
-        int hours = int.Parse(timeParts[0]);
-        int minutes = int.Parse(timeParts[1]);
+ 
+Output Format
 
-        // Ensure hours and minutes are in the valid range
-        hours %= 24;
-        minutes %= 60;
+ 
+Print the winner's player ID to the standard output stream
 
-        // Calculate the angles made by hour and minute hands with respect to 12:00
-        double hourAngle = 0.5 * (60 * hours + minutes);
-        double minuteAngle = 6 * minutes;
-
-        // Calculate the absolute difference between the angles
-        double angle = Math.Abs(hourAngle - minuteAngle);
-
-        // Consider the smaller angle between the hands (360 - angle) if needed
-        angle = Math.Min(360 - angle, angle);
-
-        // Round up to the nearest integer
-        return (int)Math.Ceiling(angle);
-    }
-}
+ 
+Sample Input	Sample Output	Explanation
+bharat32,5ravi,linga,monica45	5ravi	bharat32,linga will be eliminated in the first run. Left with 5ravi,monica45 bomber starts eliminating from right to left. monica45 will be eliminated and the winner is 5ravi
+sanju98,veera90,ganga007,yohesh23,john78	veera90	
