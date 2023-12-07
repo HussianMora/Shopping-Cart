@@ -1,28 +1,40 @@
-import math
+using System;
 
-def calculate_clock_angle(time):
-    # Split the input time into hours and minutes
-    hours, minutes = map(int, time.split(':'))
+class Program
+{
+    static void Main()
+    {
+        // Read input from standard input
+        Console.Write("Enter the time in HH:MM format: ");
+        string inputTime = Console.ReadLine();
 
-    # Ensure hours are in the range [0, 11] and minutes are in the range [0, 59]
-    hours %= 12
-    minutes %= 60
+        // Calculate and print the smallest angle
+        int result = CalculateClockAngle(inputTime);
+        Console.WriteLine(result);
+    }
 
-    # Calculate the angles made by hour and minute hands with respect to 12:00
-    hour_angle = 0.5 * (60 * hours + minutes)
-    minute_angle = 6 * minutes
+    static int CalculateClockAngle(string time)
+    {
+        // Split the input time into hours and minutes
+        string[] timeParts = time.Split(':');
+        int hours = int.Parse(timeParts[0]);
+        int minutes = int.Parse(timeParts[1]);
 
-    # Calculate the absolute difference between the angles
-    angle = abs(hour_angle - minute_angle)
+        // Ensure hours are in the range [0, 11] and minutes are in the range [0, 59]
+        hours %= 12;
+        minutes %= 60;
 
-    # Consider the smaller angle between the hands (360 - angle) if needed
-    angle = min(360 - angle, angle)
+        // Calculate the angles made by hour and minute hands with respect to 12:00
+        double hourAngle = 0.5 * (60 * hours + minutes);
+        double minuteAngle = 6 * minutes;
 
-    return math.ceil(angle)
+        // Calculate the absolute difference between the angles
+        double angle = Math.Abs(hourAngle - minuteAngle);
 
-# Read input from standard input
-time = input("Enter the time in HH:MM format: ")
+        // Consider the smaller angle between the hands (360 - angle) if needed
+        angle = Math.Min(360 - angle, angle);
 
-# Calculate and print the smallest angle
-result = calculate_clock_angle(time)
-print(result)
+        // Round up to the nearest integer
+        return (int)Math.Ceiling(angle);
+    }
+}
