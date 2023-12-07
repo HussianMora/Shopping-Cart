@@ -20,8 +20,8 @@ class Program
         int hours = int.Parse(timeParts[0]);
         int minutes = int.Parse(timeParts[1]);
 
-        // Ensure hours are in the range [0, 11] and minutes are in the range [0, 59]
-        hours %= 12;
+        // Ensure hours and minutes are in the valid range
+        hours %= 24;
         minutes %= 60;
 
         // Calculate the angles made by hour and minute hands with respect to 12:00
