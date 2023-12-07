@@ -1,41 +1,8 @@
-using System;
+Given the time in the 24 HR format (HH:MM), write a program to print the smallest angle (in degrees) between the hour and minute hands of the clock at the given time.
 
-class Program
-{
-    static void Main()
-    {
-        // Read input from the user
-        Console.Write("Enter the value of N: ");
-        int N = int.Parse(Console.ReadLine());
+Input and output format:
 
-        // Call the function to print the hourglass pattern
-        PrintHourglassPattern(N);
-    }
+Read the input from standard input. Print the ceil value of the angle to standard output.
 
-    static void PrintHourglassPattern(int N)
-    {
-        for (int i = 1; i <= N; i++)
-        {
-            // Print decreasing numbers
-            for (int j = 1; j <= i; j++)
-            {
-                Console.Write(j + " 0 ");
-            }
-
-            // Move to the next line
-            Console.WriteLine();
-        }
-
-        for (int i = N - 1; i >= 1; i--)
-        {
-            // Print decreasing numbers
-            for (int j = 1; j <= i; j++)
-            {
-                Console.Write(j + " 0 ");
-            }
-
-            // Move to the next line
-            Console.WriteLine();
-        }
-    }
-}
+Sample Input	Sample Output	Explanation
+03:30	75	
