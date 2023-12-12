@@ -1,0 +1,177 @@
+Option Explicit
+
+Private Sub cmbCancel_Click()
+  Unload Me
+End Sub
+
+Private Sub cmbDelete_Click()
+  Dim iAnswer As Long
+  
+  cmbDelete.Enabled = False
+  
+  ConnectToStandardDB "frmAccessorySet.cmbDelete_Click"
+  
+  AccessorySetCode = panSetCode.caption
+  If Left(AccessorySetCode, 7) = "STDSET-" Then
+    'ask twice if name could be standard accessory set
+    iAnswer = MsgBox("Accessory set '" + AccessorySetCode + "'" & vbNewLine & _
+    "is a standard accessory set. Are you sure to delete it?", 36)
+    If iAnswer = 6 Then
+        iAnswer = MsgBox("Do you really want to delete accessory set '" + AccessorySetCode + "'?", 36)
+        If iAnswer = 6 Then
+            Screen.MousePointer = vbHourglass
+            DeleteAccessorySet
+            ReadAccessorySets
+            Screen.MousePointer = vbDefault
+        Else
+            cmbDelete.Enabled = True
+            Exit Sub
+        End If
+    End If
+  Else
+    iAnswer = MsgBox("Do you really want to delete accessory set '" + AccessorySetCode + "'?", 36)
+    If iAnswer = 6 Then
+        Screen.MousePointer = vbHourglass
+        DeleteAccessorySet
+        ReadAccessorySets
+        Screen.MousePointer = vbDefault
+    Else
+        cmbDelete.Enabled = True
+        Exit Sub
+    End If
+  End If
+  
+  DisconnectStandardDB "frmAccessorySet.cmbDelete_Click"
+  
+  cmbDelete.Enabled = True
+
+End Sub
+
+Private Sub cmbOpen_Click()
+
+  ConnectToStandardDB "frmAccessorySet.cmbOpen_Click"
+  ConnectToLDTNetDB "frmAccessorySet.cmbOpen_Click"
+  Screen.MousePointer = vbHourglass
+  AccessorySetCode = panSetCode.caption
+  OpenAccessorySet
+  AccessoryChangesMade = True
+  DisconnectStandardDB "frmAccessorySet.cmbOpen_Click"
+  ConnectToLDTNetDB "frmAccessorySet.cmbOpen_Click"
+  Screen.MousePointer = vbDefault
+  bTriggerGenerateBushings = True  'bushings are generated in frmAccessories
+  memAPL7a2(1) = ""
+  memAPL7a2(2) = ""
+  memAPL7a2(3) = ""
+  
+  Unload Me
+  
+End Sub
+
+Public Sub ReadAccessorySets()
+  Dim MySet As DAO.Recordset
+  Dim MySetADO As ADODB.Recordset
+  Dim Offset As Long
+
+  lstAccessorySet.Clear
+  sSQL = "SELECT DISTINCT Description FROM AccessorySets"
+    
+  If useSQLServer = True Or useAccessADO = True Then
+
+    Set MySetADO = New ADODB.Recordset
+    MySetADO.Open sSQL, dbStandardADO
+    If Not MySetADO.EOF Then
+      Offset = 1
+      Do
+          lstAccessorySet.AddItem MySetADO("Description")
+          Offset = Offset + 1
+          MySetADO.MoveNext
+      Loop Until MySetADO.EOF = True
+      lstAccessorySet.listIndex = 0
+      ReadAccessorySetCode
+    Else
+      Beep
+      frmAccessories.addMessage "No accessory sets found in standard database.", MESSAGETYPE_WARNING
+    End If
+    MySetADO.Close
+  
+  Else
+  
+    Set MySet = dbStandard.OpenRecordset(sSQL, dbOpenSnapshot)
+    If Not MySet.EOF Then
+      Offset = 1
+      Do
+          lstAccessorySet.AddItem MySet("Description")
+          Offset = Offset + 1
+          MySet.MoveNext
+      Loop Until MySet.EOF = True
+      lstAccessorySet.listIndex = 0
+      ReadAccessorySetCode
+    Else
+      Beep
+      frmAccessories.addMessage "No accessory sets found in standard database.", MESSAGETYPE_WARNING
+    End If
+    MySet.Close
+  
+  End If
+  
+End Sub
+
+Private Sub Form_Load()
+  
+  WriteLog "frmAccessorySet.Form_Load()"
+  
+  Me.Top = frmAccessories.Top
+  If frmAccessories.Left - Me.width > 0 Then
+    Me.Left = frmAccessories.Left - Me.width
+  Else
+    Me.Left = frmAccessories.Left + frmAccessories.width
+  End If
+  
+  ConnectToStandardDB "frmAccessorySet.Form_Load"
+  ReadAccessorySets
+  DisconnectStandardDB "frmAccessorySet.Form_Load"
+
+End Sub
+
+Private Sub lstAccessorySet_Click()
+  Dim bStandardOpen As Boolean
+  
+  bStandardOpen = IsStandardDBOpen
+  If Not bStandardOpen Then ConnectToStandardDB "frmAccessorySet.lstAccessorySet_Click"
+  ReadAccessorySetCode
+  If Not bStandardOpen Then DisconnectStandardDB "frmAccessorySet.lstAccessorySet_Click"
+
+End Sub
+
+Public Sub ReadAccessorySetCode()
+  Dim MySet As DAO.Recordset
+  Dim MySetADO As ADODB.Recordset
+
+  sSQL = "SELECT AccessorySetCode, Description FROM AccessorySets WHERE Description = '" + lstAccessorySet.text + "'"
+    
+  If useSQLServer = True Or useAccessADO = True Then
+
+    Set MySetADO = New ADODB.Recordset
+    MySetADO.Open sSQL, dbStandardADO
+    panSetCode.caption = ""
+    If Not MySetADO.EOF Then
+      If VarType(MySetADO("AccessorySetCode")) = 8 Then
+          panSetCode.caption = MySetADO("AccessorySetCode")
+      End If
+    End If
+    MySetADO.Close
+  
+  Else
+  
+    Set MySet = dbStandard.OpenRecordset(sSQL, dbOpenSnapshot)
+    panSetCode.caption = ""
+    If Not MySet.EOF Then
+      If VarType(MySet("AccessorySetCode")) = 8 Then
+          panSetCode.caption = MySet("AccessorySetCode")
+      End If
+    End If
+    MySet.Close
+  
+  End If
+  
+End Sub
