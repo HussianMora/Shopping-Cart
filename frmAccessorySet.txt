@@ -1,9 +1,8 @@
-Connects to both the standard database and another database (LDTNetDB).
-Retrieves the AccessorySetCode from a caption.
-Opens the accessory set.
-Marks that accessory changes have been made.
+Disables the "Delete" button (cmbDelete.Enabled = False).
+Connects to the standard database.
+Retrieves the AccessorySetCode from a caption (possibly associated with a control in the form).
+Displays confirmation messages based on whether the accessory set is a standard set.
+If confirmed, triggers the deletion of the accessory set.
+Reads and updates the list of accessory sets in the form.
+Re-enables the "Delete" button.
 Disconnects from the standard database.
-Connects again to the other database (LDTNetDB).
-Sets a flag (bTriggerGenerateBushings) to true.
-Resets values in an array (memAPL7a2).
-Unloads (closes) the current form.
