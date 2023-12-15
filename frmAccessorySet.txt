@@ -1,8 +1,10 @@
-Disables the "Delete" button (cmbDelete.Enabled = False).
-Connects to the standard database.
-Retrieves the AccessorySetCode from a caption (possibly associated with a control in the form).
-Displays confirmation messages based on whether the accessory set is a standard set.
-If confirmed, triggers the deletion of the accessory set.
-Reads and updates the list of accessory sets in the form.
-Re-enables the "Delete" button.
-Disconnects from the standard database.
+ReadAccessorySets populates the list box (lstAccessorySet) with distinct accessory set descriptions from the "AccessorySets" table.
+It checks whether to use ADO or non-ADO (DAO) for database operations based on application configuration.
+The list box is cleared before being populated.
+Warning messages are displayed if no accessory sets are found in the standard database.
+After populating the list box, the ReadAccessorySetCode subroutine is triggered to read and display the code of the selected accessory set.
+
+
+
+
+
