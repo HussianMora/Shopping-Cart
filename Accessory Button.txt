@@ -1,0 +1,310 @@
+Private Sub clbDefaultSet_Click()
+'Load default accessory set
+  Dim i As Integer
+  Dim iAnswer As Integer
+  Dim iOffset As Integer
+  Dim iRowIndex As Integer
+
+  If NoAction Then Exit Sub
+  NoAction = True
+    
+  ClearMessages
+
+  If Len(DefaultAccessorySetCode) = 7 Then
+    addMessage "There is not enough calculated data to load default accessory set.", MESSAGETYPE_WARNING
+  Else
+    iAnswer = MsgBox("Do you really want to load default accessory set named '" & DefaultAccessorySetCode & "'?", 36)
+    If iAnswer = 6 Then
+        clbClose.Enabled = False
+        Screen.MousePointer = vbHourglass
+        ConnectToStandardDB "frmAccessories.clbDefaultSet_Click"
+        ConnectToLDTNetDB "frmAccessories.clbDefaultSet_Click"
+        'Reset all accessories except OLTC and motor drive unit
+        For i = 1 To 18
+            tAPL7A(i).text = ""
+            sItemCode(i) = ""
+            DoEvents
+        Next i
+        iRowIndex = 1
+        OtherGridLineCount = Val(memAPL7a(maxfieldA + 1))
+        If OtherGridLineCount >= 1 Then
+            For i = (maxfieldA + 2) To ((maxfieldA + 2) + (OtherGridLineCount - 1) * 5) Step 5
+                sItemCode(i) = ""
+                For iOffset = 0 To 5
+                    OtherGridLineBuffer(iRowIndex, 1 + iOffset) = ""
+                Next iOffset
+                iRowIndex = iRowIndex + 1
+            Next i
+            InitOtherGrid
+        End If
+        OtherGridLineCount = 0
+        panAPL7A(1).caption = "0 "
+        Screen.MousePointer = vbDefault
+        clbClear.Enabled = True
+        Screen.MousePointer = vbDefault
+        'load the default accessory set
+        AccessorySetCode = DefaultAccessorySetCode
+        OpenAccessorySet
+        Update_tAPL7a
+        AccessoryChangesMade = True
+        DisconnectStandardDB "frmAccessories.clbDefaultSet_Click"
+        DisconnectLDTNetDB "frmAccessories.clbDefaultSet_Click"
+        Screen.MousePointer = vbDefault
+        clbClose.Enabled = True
+    Else
+        NoAction = False
+        Exit Sub
+    End If
+End If
+
+  iAnswer = MsgBox("Generate bushings too?", 36)
+  If iAnswer = 6 Then
+    If iAccessorySourceDB = 1 Then
+      ConnectToAccessoryDB "frmAccessories.clbDefaultSet_Click"
+    Else
+      ConnectToLDTNetDB "frmAccessories.clbDefaultSet_Click"
+    End If
+    GenerateBushings
+    If iAccessorySourceDB = 1 Then
+      DisconnectAccessoryDB "frmAccessories.clbDefaultSet_Click"
+    Else
+      DisconnectLDTNetDB "frmAccessories.clbDefaultSet_Click"
+      End If
+  End If
+  
+  Screen.MousePointer = vbDefault
+  MySendKeys ("{TAB}")
+  NoAction = False
+  
+  clbCost
+
+End Sub
+
+Private Sub clbClear_Click()
+  Dim i As Integer
+  Dim iAnswer As Integer
+  Dim iOffset As Integer
+  Dim iRowIndex As Integer
+
+  ' Reset accessories
+
+  clbClear.Enabled = False
+
+  iAnswer = MsgBox("Do you really want to clear all accessories?", 36)
+  If iAnswer = 6 Then
+    Screen.MousePointer = vbHourglass
+    For i = 1 To 3
+        cmbAPL7a2(i).text = ""
+        sItemCodea2(i) = ""
+    Next i
+    For i = 1 To maxfieldA
+        tAPL7A(i).text = ""
+        sItemCode(i) = ""
+        DoEvents
+    Next i
+    AccessoryChangesMade = True
+    iRowIndex = 1
+    OtherGridLineCount = Val(memAPL7a(maxfieldA + 1))
+    If OtherGridLineCount >= 1 Then
+        For i = (maxfieldA + 2) To ((maxfieldA + 2) + (OtherGridLineCount - 1) * 5) Step 5
+            sItemCode(i) = ""
+            For iOffset = 0 To 5
+                OtherGridLineBuffer(iRowIndex, 1 + iOffset) = ""
+            Next iOffset
+            iRowIndex = iRowIndex + 1
+        Next i
+        InitOtherGrid
+    End If
+    OtherGridLineCount = 0
+    panAPL7A(1).caption = "0 "
+    Screen.MousePointer = vbDefault
+  Else
+      clbClear.Enabled = True
+  End If
+
+  clbClear.Enabled = True
+  Screen.MousePointer = vbDefault
+
+End Sub
+
+
+Private Sub clbClose_Click()
+  Dim iMissing As Boolean
+  Dim i As Integer
+  
+  If NoAction Then Exit Sub
+  NoAction = True
+  
+  ClearMessages
+  
+  iMissing = False
+
+  If CheckAccessoriesForCode <> 0 And iAccessorySourceDB <> 1 Then
+    NoAction = False
+    Exit Sub
+  End If
+
+  'With OLTC check if the final OLTC for cost calculation has been selected
+  If OnLoadTapChanger = 1 Then
+    i = 1
+    Do
+        If tAPL7A(20).text = OLTCVersions(i) Then
+            iMissing = True
+        End If
+        i = i + 1
+    Loop Until OLTCVersions(i) = "  "
+  End If
+
+  MousePointer = vbArrowHourglass
+  For i = 2 To 22 Step 2
+    If tAPL7A(i).text > "" Then
+      If tAPL7A(i - 1).text = "" Then
+        addMessage "Please input number of " & lbl7A(i).caption & " !", MESSAGETYPE_WARNING
+        tAPL7A(i - 1).SetFocus
+        MousePointer = vbDefault
+        NoAction = False
+        Exit Sub
+      End If
+    End If
+    If tAPL7A(i - 1).text > "" Then
+      If tAPL7A(i).text = "" Or (i = 20 And iMissing = True) Then
+        addMessage "Please input Article Number of " & lbl7A(i).caption & " !", MESSAGETYPE_WARNING
+        tAPL7A(i).SetFocus
+        MousePointer = vbDefault
+        NoAction = False
+        Exit Sub
+      End If
+    End If
+  Next i
+  
+  If OnLoadTapChanger = 1 Then
+    FinalOLTCSelected = True
+  End If
+  
+  WriteToolboxInputData_Local 'ennen KKLAJI/MLAJIin kirjoitusta etteivät ne resetoidu
+  
+  If AccessoryChangesMade = True Then
+    If TankType = "R" Or TankType = "N" Then
+        LoadAPLData 1, 1, "KKLAJI", tAPL7A(20).text, APL_ALL
+        LoadAPLData 1, 1, "MLAJI", tAPL7A(22).text, APL_ALL
+    End If
+    Update_memAPL7a
+    'this is used to not try to load default accessory set anymore
+    DefaultAccessoriesLoaded = True
+    DesignChangesMade = True
+    AccessoryChangesMade = False
+  End If
+    
+  If iAccessorySourceDB <> 1 Then
+    ConnectToLDTNetDB "frmAccessories.clbClose_Click"
+  End If
+  
+  CreateVLKMIndex
+  
+  If iAccessorySourceDB <> 1 Then
+    DisconnectLDTNetDB "frmAccessories.clbClose_Click"
+  End If
+    
+  If bCostOk = True Then
+    '*** UPDATES COST SUMMARY DATA ON frmCost ***
+    sError = ""
+    UpdateCostSummary
+  Else
+  End If
+    
+  SaveDesignToRecoveryFile
+  
+  Screen.MousePointer = vbDefault
+  MousePointer = vbDefault
+  gsFormCaptionDefault = gsFormCaptionDefaultCost
+  
+  Unload Me
+  
+  GetMaterialData
+
+  If bCostOk = True Then
+    On Error Resume Next
+    frmCost.GridCosts.SetFocus
+    On Error GoTo 0
+  End If
+
+  sError = "Cost or UnitCost for item(s) are missing: " & sError
+
+  If Len(sError) > 45 And giCurrentPage > 6 Then
+    ShowMessage sError, MESSAGETYPE_WARNING
+    sError = ""
+  End If
+  
+  CheckDGAmonitor
+
+  NoAction = False
+
+End Sub
+
+Private Sub clbCost()
+  Dim iMissing As Boolean
+  Dim i As Integer
+
+  If NoAction Then Exit Sub
+
+  If frmAccessories.Visible = False Then Exit Sub
+  
+  NoAction = True
+  
+  ClearMessages
+  
+  ConnectToLDTNetDB "frmAccessories.clbCost_Click"
+  ConnectToAccessoryDB "frmAccessories.clbCost_Click"
+
+  iMissing = False
+  If OnLoadTapChanger = 1 Then
+    i = 1
+    Do
+        If tAPL7A(20).text = OLTCVersions(i) Then iMissing = True
+        i = i + 1
+    Loop Until OLTCVersions(i) = "  "
+  End If
+
+  For i = 2 To 22 Step 2
+    If tAPL7A(i).text > "" Then
+        If tAPL7A(i - 1).text = "" Then
+            addMessage "Please input number of " & lbl7A(i).caption & " !", MESSAGETYPE_WARNING
+            tAPL7A(i - 1).SetFocus
+            NoAction = False
+            Exit Sub
+        End If
+    End If
+        If tAPL7A(i - 1).text > "" Then
+            If tAPL7A(i).text = "" Or (i = 20 And iMissing = True) Then
+                addMessage "Please input Article Number of " & lbl7A(i).caption & " !", MESSAGETYPE_WARNING
+                tAPL7A(i).SetFocus
+                NoAction = False
+                Exit Sub
+            End If
+        End If
+  Next i
+  
+  AccessorySetCostCalculation
+  
+  If sTempErrorMessage <> vbNullString Then
+    addMessage sTempErrorMessage, MESSAGETYPE_WARNING
+    sTempErrorMessage = vbNullString
+  End If
+  
+  DisconnectLDTNetDB "frmAccessories.clbCost_Click"
+  DisconnectAccessoryDB "frmAccessories.clbCost_Click"
+  
+  NoAction = False
+
+End Sub
+
+Private Sub cmdMoveToOther_Click()
+
+  OtherGridFocus = True
+  TooMany = False
+  grdAccessories_DblClick
+  If TooMany Then Exit Sub
+  clbCost
+  
+End Sub
+
